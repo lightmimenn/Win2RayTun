@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Win2RayTun</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="noise"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logoDot"></div>
+      <div class="brandText">
+        <div class="brandName">Win2RayTun</div>
+        <div class="brandSub">Client</div>
+      </div>
+    </div>
+
+    <div class="topActions">
+      <button class="btn btn-ghost" id="btnShareOpen" title="Поделиться подпиской">
+        <span class="ico">⤴</span>
+        Поделиться
+      </button>
+      <button class="btn btn-ghost" id="btnImportOpen" title="Импорт подписки">
+        <span class="ico">⤵</span>
+        Импорт
+      </button>
+      <button class="btn btn-ghost" id="btnReset" title="Сбросить данные (localStorage)">
+        <span class="ico">↻</span>
+        Сброс
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT PANEL -->
+    <aside class="panel left">
+      <div class="panelHeader">
+        <div>
+          <div class="panelTitle">Подписки</div>
+          <div class="panelHint">Локально сохраняется в браузере</div>
+        </div>
+
+        <div class="panelHeaderRight">
+          <div class="pill" id="pillStats">0 подписок</div>
+        </div>
+      </div>
+
+      <div class="leftActions">
+        <button class="btn btn-primary" id="btnAddSub">
+          <span class="ico">＋</span>
+          Добавить подписку
+        </button>
+
+        <button class="btn btn-secondary" id="btnAddServer">
+          <span class="ico">＋</span>
+          Добавить сервер в подписку
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="subsList" id="subsList" aria-label="Список подписок"></div>
+
+      <div class="leftFooter">
+        <div class="miniStatus">
+          <div class="dot" id="dotConn"></div>
+          <div class="miniText" id="miniConnText">Disconnected</div>
+        </div>
+        <div class="miniRight">
+          <div class="miniChip" id="miniPing">Ping: —</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT PANEL -->
+    <section class="panel right">
+      <div class="rightHeader">
+        <div class="serverBadge">
+          <div class="flag" id="selectedFlag" aria-label="Флаг"></div>
+          <div class="serverMeta">
+            <div class="serverName" id="selectedName">Выбери сервер</div>
+            <div class="serverSub" id="selectedSub">—</div>
+          </div>
+        </div>
+
+        <div class="statusBox">
+          <div class="statusLabel">Статус</div>
+          <div class="statusValue" id="statusValue">Отключено</div>
+          <div class="statusHint" id="statusHint">Подключение имитируется</div>
+        </div>
+      </div>
+
+      <div class="cardGrid">
+        <div class="card">
+          <div class="cardTitle">Состояние сервера</div>
+          <div class="kv">
+            <div class="k">Доступность</div>
+            <div class="v" id="availValue">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">Ping</div>
+            <div class="v" id="pingValue">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">Подписка</div>
+            <div class="v" id="subValue">—</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardTitle">Подключение</div>
+          <div class="connectArea">
+            <button class="btn btn-connect" id="btnConnect" disabled>
+              <span class="connectIcon" id="connectIcon">⟰</span>
+              <span id="connectText">Подключиться</span>
+            </button>
+            <div class="connectNote" id="connectNote">
+              Выберите доступный сервер слева
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bigCard">
+        <div class="bigCardTitle">Детали</div>
+        <div class="bigCardBody" id="detailsText">
+          Здесь появится информация о выбранном сервере.
+        </div>
+
+        <div class="notesWrap">
+          <div class="notesTitle">Заметки</div>
+          <textarea class="input textarea notes" id="serverNotes" placeholder="Напишите что-то своё для этого сервера..."></textarea>
+          <div class="notesHint" id="notesHint">Сохраняется локально</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: ADD SUB -->
+  <div class="modalOverlay" id="modalSub">
+    <div class="modal">
+      <div class="modalTop">
+        <div class="modalTitle">Новая подписка</div>
+        <button class="iconBtn" data-close="modalSub" aria-label="Закрыть">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="grid2">
+          <label class="field">
+            <div class="label">Эмодзи</div>
+            <select class="input" id="subIconSelect"></select>
+          </label>
+
+          <label class="field">
+            <div class="label">Название</div>
+            <input class="input" id="subNameInput" placeholder="Например: My Subscription" maxlength="32" />
+          </label>
+        </div>
+        <div class="hintBox">
+          Эмодзи будет отображаться рядом с названием подписки.
+        </div>
+      </div>
+      <div class="modalBottom">
+        <button class="btn btn-ghost" data-close="modalSub">Отмена</button>
+        <button class="btn btn-primary" id="subCreateBtn">Создать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD SERVER -->
+  <div class="modalOverlay" id="modalServer">
+    <div class="modal">
+      <div class="modalTop">
+        <div class="modalTitle">Добавить сервер</div>
+        <button class="iconBtn" data-close="modalServer" aria-label="Закрыть">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="grid2">
+          <label class="field">
+            <div class="label">Подписка</div>
+            <select class="input" id="serverSubSelect"></select>
+          </label>
+
+          <label class="field">
+            <div class="label">Флаг</div>
+            <select class="input" id="flagSelect"></select>
+          </label>
+        </div>
+
+        <label class="field">
+          <div class="label">Название сервера</div>
+          <input class="input" id="serverNameInput" placeholder="Например: Frankfurt #1" maxlength="40" />
+        </label>
+
+        <div class="hintBox">
+          Ping и доступность генерируются автоматически и периодически меняются.
+        </div>
+      </div>
+
+      <div class="modalBottom">
+        <button class="btn btn-ghost" data-close="modalServer">Отмена</button>
+        <button class="btn btn-secondary" id="serverCreateBtn">Добавить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SHARE -->
+  <div class="modalOverlay" id="modalShare">
+    <div class="modal">
+      <div class="modalTop">
+        <div class="modalTitle">Поделиться подпиской</div>
+        <button class="iconBtn" data-close="modalShare" aria-label="Закрыть">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <label class="field">
+          <div class="label">Выберите подписку</div>
+          <select class="input" id="shareSubSelect"></select>
+        </label>
+
+        <button class="btn btn-primary w100" id="btnGenerateShare">
+          Сгенерировать код
+        </button>
+
+        <label class="field">
+          <div class="label">Код</div>
+          <textarea class="input textarea" id="shareCode" placeholder="Тут появится код" readonly></textarea>
+        </label>
+
+        <div class="row">
+          <button class="btn btn-ghost" id="btnCopyShare">Скопировать</button>
+          <div class="muted" id="copyHint">—</div>
+        </div>
+      </div>
+
+      <div class="modalBottom">
+        <button class="btn btn-ghost" data-close="modalShare">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: IMPORT -->
+  <div class="modalOverlay" id="modalImport">
+    <div class="modal">
+      <div class="modalTop">
+        <div class="modalTitle">Импорт подписки</div>
+        <button class="iconBtn" data-close="modalImport" aria-label="Закрыть">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <label class="field">
+          <div class="label">Вставьте код</div>
+          <textarea class="input textarea" id="importCode" placeholder="Вставьте код сюда"></textarea>
+        </label>
+
+        <div class="hintBox">
+          Импорт работает локально: код → подписка → серверы. Никаких сетевых запросов.
+        </div>
+      </div>
+
+      <div class="modalBottom">
+        <button class="btn btn-ghost" data-close="modalImport">Отмена</button>
+        <button class="btn btn-secondary" id="btnDoImport">Импортировать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/share.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
