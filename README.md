@@ -66,6 +66,9 @@ KEY-YEST - W2RT:eyJ2IjoyLCJ0Ijoic3Vic2NyaXB0aW9uIiwiaWQiOiJzdWJfZDczODU2NWI0NDVm
 ```
 ---
 
-## 🔗LINK
+# 🔗LINKS
 🧪 UI preview available here: 
 https://lightmimenn.github.io/Win2RayTun/
+
+## ⚠️FAKE KEYS FOR TEST
+https://telegra.ph/Subscribe-keys-FAKE-01-17
